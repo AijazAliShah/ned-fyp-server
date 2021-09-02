@@ -157,7 +157,7 @@ app.post("/api/login", (req, res) => {
   console.log(req.body);
   db.query("SELECT * FROM users WHERE email = ?;", email, (err, result) => {
     if (err) {
-      res.send({ err: errr });
+      res.send({ err: err });
     }
 
     if (result.length > 0) {
@@ -248,7 +248,7 @@ app.get("/basicinfo/:id", (req, res) => {
   const id = req.params.id;
   db.query("SELECT * FROM users WHERE id = ?;", id, (err, result) => {
     if (err) {
-      res.send({ err: errr });
+      res.send({ err: err });
     }
     const data = result[0];
     console.log(data);
@@ -330,7 +330,7 @@ app.get("/api/progress", async (req, res) => {
     await new Promise(function (resolve, reject) {
       db.query("SELECT * FROM progress;", (err, result) => {
         if (err) {
-          res.send({ err: errr });
+          res.send({ err: err });
         }
         resolve({ result });
       });
@@ -381,7 +381,7 @@ app.get("/api/project", async (req, res) => {
     await new Promise(function (resolve, reject) {
       db.query("SELECT * FROM project;", async (err, result) => {
         if (err) {
-          res.send({ err: errr });
+          res.send({ err: err });
         }
         const response = [];
         for (let i = 0; i < result.length; i++) {
@@ -391,7 +391,7 @@ app.get("/api/project", async (req, res) => {
               result[i].project_id,
               (err, result) => {
                 if (err) {
-                  res.send({ err: errr });
+                  res.send({ err: err });
                 }
                 resolve({ result });
               }
@@ -418,7 +418,7 @@ app.get("/api/project/one/:id", async (req, res) => {
         id,
         async (err, result) => {
           if (err) {
-            res.send({ err: errr });
+            res.send({ err: err });
           }
           const response = [];
           for (let i = 0; i < result.length; i++) {
@@ -428,7 +428,7 @@ app.get("/api/project/one/:id", async (req, res) => {
                 result[i].project_id,
                 (err, result) => {
                   if (err) {
-                    res.send({ err: errr });
+                    res.send({ err: err });
                   }
                   resolve({ result });
                 }
@@ -473,7 +473,7 @@ app.post("/api/project/delete/:id", async (req, res) => {
         id,
         (err, result) => {
           if (err) {
-            res.send({ err: errr });
+            res.send({ err: err });
           }
           resolve({ result });
         }
@@ -514,7 +514,7 @@ app.get("/api/projectStd", async (req, res) => {
     await new Promise(function (resolve, reject) {
       db.query("SELECT * FROM projectStd;", (err, result) => {
         if (err) {
-          res.send({ err: errr });
+          res.send({ err: err });
         }
         resolve({ result });
       });
@@ -559,7 +559,7 @@ app.get("/api/weightage/:id", async (req, res) => {
     await new Promise(function (resolve, reject) {
       db.query(`SELECT * FROM weightage WHERE project_id = '${req.params.id}';`, (err, result) => {
         if (err) {
-          res.send({ err: errr });
+          res.send({ err: err });
         }
         resolve({ result });
       });
@@ -656,7 +656,7 @@ app.get("/api/grade", async (req, res) => {
         }
         console.log(response)
         if (err) {
-          res.send({ err: errr });
+          res.send({ err: err });
         }
         resolve({ result: response });
       });
@@ -671,7 +671,7 @@ app.get("/api/getall/grades/:id", async (req, res) => {
       db.query(`SELECT * FROM grades WHERE project_id=${req.params.id};`, (err, result) => {
 
         if (err) {
-          res.send({ err: errr });
+          res.send({ err: err });
         }
        console.log(result)
         resolve({ result });
@@ -685,7 +685,7 @@ app.get("/api/grade/:id", async (req, res) => {
     await new Promise(function (resolve, reject) {
       db.query(`SELECT * FROM grades WHERE id='${req.params.id}';`, (err, result) => {
         if (err) {
-          res.send({ err: errr });
+          res.send({ err: err });
         }
         resolve({ result });
       });
