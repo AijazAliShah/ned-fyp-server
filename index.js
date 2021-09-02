@@ -803,7 +803,7 @@ app.put("/api/update", (req, res) => {
 });
 
 const port = process.env.PORT || 8000;
-port.listen(port, () => {
+app.listen(port, () => {
   console.log("App is running on port " + port);
 });
 
