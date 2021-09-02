@@ -19,11 +19,7 @@ const cookieParser = require("cookie-parser");
 app.use(express.json());
 app.use(upload());
 app.use(
-  cors({
-    origin: ["https://compassionate-bardeen-289314.netlify.app"],
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
+  cors()
 );
 
 app.use(cookieParser());
