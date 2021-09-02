@@ -802,8 +802,9 @@ app.put("/api/update", (req, res) => {
   });
 });
 
-app.listen(3001, () => {
-  console.log("running on port 3001");
+const port = process.env.PORT || 8000;
+port.listen(port, () => {
+  console.log("App is running on port " + port);
 });
 
 //forgetpasswoed
