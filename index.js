@@ -45,11 +45,18 @@ app.use(
 app.use(upload());
 
 //database Connection
+// const db = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "root",
+//   database: "fypdb",
+//   port: 3306,
+// });
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "fypdb",
+  host: "us-cdbr-east-04.cleardb.com",
+  user: "bbea3554c54381",
+  password: "9632a50a",
+  database: "heroku_2da99798871307c",
   port: 3306,
 });
 
