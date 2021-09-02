@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(upload());
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["https://compassionate-bardeen-289314.netlify.app/"],
     methods: ["GET", "POST"],
     credentials: true,
   })
