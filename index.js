@@ -48,21 +48,23 @@ app.use(upload());
 //   database: "fypdb",
 //   port: 3306,
 // });
-const db = mysql.createConnection({
-  host: "us-cdbr-east-04.cleardb.com",
-  user: "bbea3554c54381",
-  password: "9632a50a",
-  database: "heroku_2da99798871307c",
-  port: 3306,
-});
+// const db = mysql.createConnection({
+//   host: "us-cdbr-east-04.cleardb.com",
+//   user: "bbea3554c54381",
+//   password: "9632a50a",
+//   database: "heroku_2da99798871307c",
+//   port: 3306,
+// });
 
-db.connect((err) => {
-  if (err) {
-    throw err;
-  } else {
-    console.log("Connected");
-  }
-});
+// db.connect((err) => {
+//   if (err) {
+//     throw err;
+//   } else {
+//     console.log("Connected");
+//   }
+// });
+var db = require('./db.js');
+
 
 var userRoutes = require("./routes/Users.js");
 app.use("/auth", userRoutes);
