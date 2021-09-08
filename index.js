@@ -906,7 +906,7 @@ app.post("/api/templates/edit", async (req, res) => {
     await new Promise(function (resolve, reject) {
       const SqlUpdate = `UPDATE templates SET name = '${data.name}', url= '${data.url}' WHERE name = '${data.name}'`;
       db.query(SqlUpdate, (result,err) => {
-        console.log(err,result)
+        console.log(result,err)
         if (err) resolve({ auth: false, message: err });
         resolve({ auth: true, message: "templates updated successfully" });
       });
