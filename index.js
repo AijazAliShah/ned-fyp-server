@@ -72,15 +72,17 @@ app.use("/auth", userRoutes);
 //Reading data from test table
 app.get("/api/get", (req, res) => {
   const sqlSelect = "SELECT * FROM test";
-  db.query(sqlSelect, (err, result) => {
+  db.query(sqlSelect, (result,err) => {
+    
     res.send(result);
+
   });
 });
 
 //Reading data from project table (Assignment Page)
 app.get("/api/view_list", (req, res) => {
   const sqlSelect = "SELECT * FROM project";
-  db.query(sqlSelect, (err, result) => {
+  db.query(sqlSelect, (result,err) => {
     res.send(result);
   });
 });
@@ -89,7 +91,7 @@ app.get("/api/view_list", (req, res) => {
 app.get("/api/info", (req, res) => {
   const sqlSelect =
     "SELECT * FROM announcements ORDER BY Announcements_id DESC";
-  db.query(sqlSelect, (err, result) => {
+  db.query(sqlSelect, (result,err) => {
     res.send(result);
   });
 });
@@ -100,7 +102,7 @@ app.post("/api/insert", (req, res) => {
   const password = req.body.password;
 
   const sqlInsert = "INSERT INTO test (value2, value3) VALUES (?,?);";
-  db.query(sqlInsert, [email, password], (err, result) => {
+  db.query(sqlInsert, [email, password], (result,err) => {
     console.log(result);
   });
 });
@@ -116,7 +118,7 @@ app.post("/api/register", async (req, res) => {
   const department = req.body.department;
   res.json(
     await new Promise(function (resolve, reject) {
-      db.query("SELECT * FROM users WHERE email = ?;", email, (err, result) => {
+      db.query("SELECT * FROM users WHERE email = ?;", email, (result,err) => {
         if (err) {
           res.send({ err: err });
         }
@@ -134,8 +136,8 @@ app.post("/api/register", async (req, res) => {
             db.query(
               sqlInsert,
               [name, email, hash, type, stdId, department],
-              (err, result) => {
-                console.log(err, result);
+              (result,err) => {
+                console.log(result,err);
                 resolve({ auth: true, message: "user successfully register" });
               }
             );
@@ -153,20 +155,22 @@ app.post("/api/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   console.log(req.body);
-  db.query("SELECT * FROM users WHERE email = ?;", email, (err, result) => {
+  db.query("SELECT * FROM users WHERE email = ?;", email, ( result,err) => {
     if (err) {
       res.send({ err: err });
     }
-
+    
     if (result.length > 0) {
+      
       bcrypt.compare(password, result[0].password, (error, response) => {
         if (response) {
           const admin_id = result[0].admin_id;
           const token = jwt.sign({ admin_id }, "jwtSecret", {
             expiresIn: 300,
           });
-
+            
           req.session.user = result;
+         
           console.log(req.session.user);
           //res.send(result);
           res.json({ auth: true, token: token, result: result, name: name });
@@ -196,7 +200,7 @@ app.post("/api/change/password", async (req, res) => {
           resolve({ auth: false, message: "something went wrong" });
         }
         const SqlUpdate = "UPDATE users SET password = ? WHERE email = ?";
-        db.query(SqlUpdate, [hash, email], (err, result) => {
+        db.query(SqlUpdate, [hash, email], (result,err) => {
           if (err) resolve({ auth: false, message: "something went wrong" });
           resolve({ auth: true, message: "user updated successfully" });
         });
@@ -213,7 +217,7 @@ app.post("/api/reset/password", async (req, res) => {
 
   res.json(
     await new Promise(function (resolve, reject) {
-      db.query("SELECT * FROM users WHERE email = ?;", email, (err, result) => {
+      db.query("SELECT * FROM users WHERE email = ?;", email, (result,err) => {
         bcrypt.compare(
           cpassword,
           result[0].password,
@@ -225,7 +229,7 @@ app.post("/api/reset/password", async (req, res) => {
                 }
                 const SqlUpdate =
                   "UPDATE users SET password = ? WHERE email = ?";
-                db.query(SqlUpdate, [hash, email], (err, result) => {
+                db.query(SqlUpdate, [hash, email], (result,err) => {
                   if (err)
                     resolve({ auth: false, message: "something went wrong" });
                   resolve({ auth: true, message: "user updated successfully" });
@@ -244,7 +248,7 @@ app.post("/api/reset/password", async (req, res) => {
 //Login API with hash function for password
 app.get("/basicinfo/:id", (req, res) => {
   const id = req.params.id;
-  db.query("SELECT * FROM users WHERE id = ?;", id, (err, result) => {
+  db.query("SELECT * FROM users WHERE id = ?;", id, (result,err) => {
     if (err) {
       res.send({ err: err });
     }
@@ -296,7 +300,7 @@ app.post("/api/insert_project", (req, res) => {
 
   const sqlInsert =
     "INSERT INTO project (Title, Internal, External) VALUES (?,?,?);";
-  db.query(sqlInsert, [title, internal, external], (err, result) => {
+  db.query(sqlInsert, [title, internal, external], (result,err) => {
     console.log(err);
   });
 });
@@ -312,7 +316,7 @@ app.post("/api/progress", async (req, res) => {
   res.send(
     await new Promise(function (resolve, reject) {
       const sqlInsert = "INSERT INTO progress (Title, supEmail, userName, userEmail, date) VALUES (?,?,?,?,?);";
-      db.query(sqlInsert, [Title, supEmail, userName, userEmail, date], (err, result) => {
+      db.query(sqlInsert, [Title, supEmail, userName, userEmail, date], (result,err) => {
         console.log(err);
         if (err) {
           resolve({ message: "wsomething wend wrong" });
@@ -326,7 +330,7 @@ app.post("/api/progress", async (req, res) => {
 app.get("/api/progress", async (req, res) => {
   res.send(
     await new Promise(function (resolve, reject) {
-      db.query("SELECT * FROM progress;", (err, result) => {
+      db.query("SELECT * FROM progress;", (result,err) => {
         if (err) {
           res.send({ err: err });
         }
@@ -344,7 +348,7 @@ app.post("/api/progress/edit/:id", async (req, res) => {
   res.json(
     await new Promise(function (resolve, reject) {
       const SqlUpdate = "UPDATE progress SET reportUrl = ? WHERE id = ?";
-      db.query(SqlUpdate, [reportUrl, id], (err, result) => {
+      db.query(SqlUpdate, [reportUrl, id], (result,err) => {
         if (err) resolve({ auth: false, message: "something went wrong" });
         resolve({ auth: true, message: "progress updated successfully" });
       });
@@ -363,7 +367,7 @@ app.post("/api/project", async (req, res) => {
     await new Promise(function (resolve, reject) {
       const sqlInsert =
         "INSERT INTO project (title, internal, external, batch) VALUES (?,?,?,?);";
-      db.query(sqlInsert, [title, internal, external, batch], (err, result) => {
+      db.query(sqlInsert, [title, internal, external, batch], (result,err) => {
         console.log(err);
         if (err) {
           resolve({ message: "wsomething wend wrong" });
@@ -377,7 +381,7 @@ app.post("/api/project", async (req, res) => {
 app.get("/api/project", async (req, res) => {
   res.send(
     await new Promise(function (resolve, reject) {
-      db.query("SELECT * FROM project;", async (err, result) => {
+      db.query("SELECT * FROM project;", async (result,err) => {
         if (err) {
           res.send({ err: err });
         }
@@ -387,7 +391,7 @@ app.get("/api/project", async (req, res) => {
             db.query(
               "SELECT * FROM projectStd WHERE project_id = ?;",
               result[i].project_id,
-              (err, result) => {
+              (result,err) => {
                 if (err) {
                   res.send({ err: err });
                 }
@@ -414,7 +418,7 @@ app.get("/api/project/one/:id", async (req, res) => {
       db.query(
         "SELECT * FROM project WHERE project_id = ?;",
         id,
-        async (err, result) => {
+        async (result,err) => {
           if (err) {
             res.send({ err: err });
           }
@@ -424,7 +428,7 @@ app.get("/api/project/one/:id", async (req, res) => {
               db.query(
                 "SELECT * FROM projectStd WHERE project_id = ?;",
                 result[i].project_id,
-                (err, result) => {
+                (result,err) => {
                   if (err) {
                     res.send({ err: err });
                   }
@@ -453,7 +457,7 @@ app.post("/api/project/edit/:id", async (req, res) => {
   res.json(
     await new Promise(function (resolve, reject) {
       const SqlUpdate = `UPDATE project SET title = '${data.title}', internal= '${data.internal}', external= '${data.external}', batch= '${data.batch}'  WHERE project_id = ${id}`;
-      db.query(SqlUpdate, (err, result) => {
+      db.query(SqlUpdate, (result,err) => {
         if (err) resolve({ auth: false, message: err });
         resolve({ auth: true, message: "progress updated successfully" });
       });
@@ -469,7 +473,7 @@ app.post("/api/project/delete/:id", async (req, res) => {
       db.query(
         "DELETE FROM project WHERE project_id = ?;",
         id,
-        (err, result) => {
+        (result,err) => {
           if (err) {
             res.send({ err: err });
           }
@@ -495,7 +499,7 @@ app.post("/api/projectStd", async (req, res) => {
       db.query(
         sqlInsert,
         [fullName, rollNo, email, project_id],
-        (err, result) => {
+        (result,err) => {
           console.log(err);
           if (err) {
             resolve({ message: "wsomething wend wrong" });
@@ -510,7 +514,7 @@ app.post("/api/projectStd", async (req, res) => {
 app.get("/api/projectStd", async (req, res) => {
   res.send(
     await new Promise(function (resolve, reject) {
-      db.query("SELECT * FROM projectStd;", (err, result) => {
+      db.query("SELECT * FROM projectStd;", (result,err) => {
         if (err) {
           res.send({ err: err });
         }
@@ -539,7 +543,7 @@ app.post("/api/weightage", async (req, res) => {
       db.query(
         sqlInsert,
         [project_id, weight1, weight2, weight3, weight4, finalReport, otherRepots, byChairman],
-        (err, result) => {
+        (result,err) => {
           console.log(err);
           if (err) {
             resolve({ message: "wsomething wend wrong" });
@@ -555,7 +559,7 @@ app.get("/api/weightage/:id", async (req, res) => {
   console.log(req.params.id)
   res.send(
     await new Promise(function (resolve, reject) {
-      db.query(`SELECT * FROM weightage WHERE project_id = '${req.params.id}';`, (err, result) => {
+      db.query(`SELECT * FROM weightage WHERE project_id = '${req.params.id}';`, (result,err) => {
         if (err) {
           res.send({ err: err });
         }
@@ -575,7 +579,7 @@ app.post("/api/projectStd/edit/:id", async (req, res) => {
       const SqlUpdate = `UPDATE projectStd SET fullName = '${data.fullName}', rollNo= '${data.rollNo}', email= '${data.email}'  WHERE id = ${id}`;
       db.query(
         SqlUpdate,
-        (err, result) => {
+        (result,err) => {
           if (err) resolve({ auth: false, message: "something went wrong" });
           resolve({ auth: true, message: "progress updated successfully" });
         }
@@ -617,7 +621,7 @@ app.post("/api/grade", async (req, res) => {
       db.query(
         sqlInsert,
         [projectTitle, project_id, batch, group_id, date, evlP, evlName1, evlName2, evlName3, designation1, designation2, designation3, stdRoll1, stdRoll2, stdRoll3, stdName1, stdName2, stdName3, groupP1, groupP2, groupP3],
-        (err, result) => {
+        (result,err) => {
           console.log(err);
           if (err) {
             resolve({ message: "wsomething wend wrong" });
@@ -640,7 +644,7 @@ function search(nameKey, prop, myArray) {
 app.get("/api/grade", async (req, res) => {
   res.send(
     await new Promise(function (resolve, reject) {
-      db.query("SELECT * FROM grades;", (err, result) => {
+      db.query("SELECT * FROM grades;", (result,err) => {
 
         let response = []
         for (var i = 0; i < result.length; i++) {
@@ -666,7 +670,7 @@ app.get("/api/getall/grades/:id", async (req, res) => {
   console.log(req.params)
   res.send(
     await new Promise(function (resolve, reject) {
-      db.query(`SELECT * FROM grades WHERE project_id=${req.params.id};`, (err, result) => {
+      db.query(`SELECT * FROM grades WHERE project_id=${req.params.id};`, (result,err) => {
 
         if (err) {
           res.send({ err: err });
@@ -681,7 +685,7 @@ app.get("/api/getall/grades/:id", async (req, res) => {
 app.get("/api/grade/:id", async (req, res) => {
   res.send(
     await new Promise(function (resolve, reject) {
-      db.query(`SELECT * FROM grades WHERE id='${req.params.id}';`, (err, result) => {
+      db.query(`SELECT * FROM grades WHERE id='${req.params.id}';`, (result,err) => {
         if (err) {
           res.send({ err: err });
         }
@@ -714,7 +718,7 @@ app.post("/api/criteria", async (req, res) => {
       db.query(
         sqlInsert,
         [grade_id, marks1, marks2, marks3, reMarks1, reMarks2, reMarks3, criteriaNo, evalNo, project_id, stdRollNo],
-        (err, result) => {
+        (result,err) => {
           console.log(err);
           if (err) {
             resolve({ message: "wsomething wend wrong" });
@@ -729,7 +733,7 @@ app.post("/api/criteria", async (req, res) => {
 app.get("/api/criteria", async (req, res) => {
   res.send(
     await new Promise(function (resolve, reject) {
-      db.query("SELECT * FROM criteria;", (err, result) => {
+      db.query("SELECT * FROM criteria;", (result,err) => {
         if (err) {
           res.send({ err: err });
         }
@@ -742,7 +746,7 @@ app.get("/api/criteria", async (req, res) => {
 app.get("/api/criteria/:projectId", async (req, res) => {
   res.send(
     await new Promise(function (resolve, reject) {
-      db.query(`SELECT * FROM criteria WHERE project_id='${req.params.projectId}';`, (err, result) => {
+      db.query(`SELECT * FROM criteria WHERE project_id='${req.params.projectId}';`, (result,err) => {
         if (err) {
           res.send({ err: err });
         }
@@ -766,7 +770,7 @@ app.post("/api/announcement", async (req, res) => {
       db.query(
         sqlInsert,
         [activity, tentativeDate, responsibility, deliverables],
-        (err, result) => {
+        (result,err) => {
           if(err)
             console.log(err);
 
@@ -780,7 +784,7 @@ app.post("/api/announcement", async (req, res) => {
 app.delete("/api/delete:project_id", (req, res) => {
   const project_id = req.params.project_id;
   const SqlDelete = "DELETE FROM project WHERE Project_id = ?";
-  db.query(SqlDelete, project_id, (err, result) => {
+  db.query(SqlDelete, project_id, (result,err) => {
     if (err) {
       console.log(err);
     } else {
@@ -795,7 +799,7 @@ app.put("/api/update", (req, res) => {
   const project_id = req.body.Project_id;
 
   const SqlUpdate = "UPDATE SET project Title = ? WHERE Project_id = ?";
-  db.query(SqlUpdate, [title, project_id], (err, result) => {
+  db.query(SqlUpdate, [title, project_id], (result,err) => {
     if (err) console.log(err);
   });
 });
@@ -881,7 +885,7 @@ app.post("/api/templates", async (req, res) => {
       db.query(
         sqlInsert,
         [name, url],
-        (err, result) => {
+        (result,err) => {
           if(err)
             console.log(err);
 
@@ -901,7 +905,7 @@ app.post("/api/templates/edit", async (req, res) => {
   res.json(
     await new Promise(function (resolve, reject) {
       const SqlUpdate = `UPDATE templates SET name = '${data.name}', url= '${data.url}' WHERE name = '${data.name}'`;
-      db.query(SqlUpdate, (err, result) => {
+      db.query(SqlUpdate, (result,err) => {
         console.log(err,result)
         if (err) resolve({ auth: false, message: err });
         resolve({ auth: true, message: "templates updated successfully" });
@@ -915,7 +919,7 @@ app.post("/api/templates/edit", async (req, res) => {
 
 app.get("/api/templates", (req, res) => {
   const sqlSelect = "SELECT * FROM templates";
-  db.query(sqlSelect, (err, result) => {
+  db.query(sqlSelect, (result,err) => {
     res.send(result);
   });
 });
